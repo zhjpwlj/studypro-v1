@@ -12,7 +12,7 @@ interface NotesProps {
   onDeleteNote: (id: string) => void;
 }
 
-const getMoodIcon = (mood?: Note['mood']): JSX.Element | null => {
+const getMoodIcon = (mood?: Note['mood']) => {
   switch (mood) {
     case 'happy': return <Smile size={18} className="text-green-500" />;
     case 'focused': return <Zap size={18} className="text-yellow-500" />;
@@ -46,7 +46,7 @@ const Notes: React.FC<NotesProps> = ({ notes, onAddNote, onUpdateNote, onDeleteN
     }
   }, [notes, activeNoteId, activeCategory, sortedNotes]);
 
-  const handleAddNote = (): void => {
+  const handleAddNote = () => {
     const cat = activeCategory === 'All' ? 'General' : activeCategory;
     onAddNote(cat);
   };

@@ -22,7 +22,7 @@ const StudyRoom: React.FC = () => {
   const [mySeat, setMySeat] = useState<number | null>(null);
   const [status, setStatus] = useState('Focusing');
 
-  const handleSit = (id: number): void => {
+  const handleSit = (id: number) => {
     if (mySeat !== null) {
         // Stand up first
         setDesks(prev => prev.map(d => d.id === mySeat ? { ...d, occupant: undefined } : d));

@@ -32,7 +32,7 @@ import { translations } from './utils/translations';
 import { LanguageContext } from './contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 
-const getDefaultWindowSize = (appId: AppModule): { width: number; height: number } => {
+const getDefaultWindowSize = (appId: AppModule) => {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
   const MENUBAR_HEIGHT = 28;
@@ -110,12 +110,12 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
   const [isMobileLayout, setIsMobileLayout] = useState(window.innerWidth < 768);
 
-  useEffect((): void | (() => void) => {
-    const handleResize = (): void => {
+  useEffect(() => {
+    const handleResize = () => {
       setIsMobileLayout(window.innerWidth < 768);
     };
     window.addEventListener('resize', handleResize);
-    return (): void => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const [isDarkMode, setIsDarkMode] = usePersistentState<boolean>('focusflow-theme-dark', true);
@@ -133,7 +133,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     { id: 'proj-0', name: 'Welcome', color: '#3b82f6' }
   ]);
 
-  const getTomorrow = (): string => {
+  const getTomorrow = () => {
       const d = new Date();
       d.setDate(d.getDate() + 1);
       return d.toISOString().split('T')[0];
@@ -178,7 +178,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
 
   const [isWipeModalOpen, setIsWipeModalOpen] = useState(false);
 
-  const getAllData = useCallback((): Record<string, unknown> => ({
+  const getAllData = useCallback(() => ({
       projects, tasks, timeEntries, notes, events, goals, classes, decks,
       settings: { isDarkMode, accentColor, wallpaper, language },
       windows,
@@ -193,7 +193,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
       backupData(user, getAllData()).catch(err => console.error("Auto-sync failed:", err));
     }, 30000); // 30 seconds debounce for auto-sync
 
-    return (): void => {
+    return () => {
       if (backupTimerRef.current) clearTimeout(backupTimerRef.current);
     };
   }, [getAllData, user]);
@@ -213,7 +213,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
   const isLiveWallpaper = wallpaper.startsWith('live:');
   const liveVideoId = isLiveWallpaper ? wallpaper.split(':')[1] : null;
 
-  const openWindow = useCallback((appId: AppModule): void => {
+  const openWindow = useCallback((appId: AppModule) => {
     setWindows(prev => {
       const existingIndex = prev.findIndex(w => w.id === appId);
       const newZIndex = nextZIndex.current++;
@@ -244,13 +244,13 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     setActiveWindowId(appId);
   }, [setWindows]);
 
-  const focusWindow = useCallback((appId: AppModule): void => {
+  const focusWindow = useCallback((appId: AppModule) => {
     const newZIndex = nextZIndex.current++;
     setWindows(prev => prev.map(w => w.id === appId ? { ...w, isMinimized: false, zIndex: newZIndex } : w));
     setActiveWindowId(appId);
   }, [setWindows]);
 
-  const closeWindow = useCallback((appId: AppModule): void => {
+  const closeWindow = useCallback((appId: AppModule) => {
     setIsClosingWindow(appId);
     setTimeout(() => {
       setWindows(prev => prev.filter(w => w.id !== appId));
@@ -261,12 +261,12 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }, 300);
   }, [activeWindowId, setWindows]);
 
-  const minimizeWindow = useCallback((appId: AppModule): void => {
+  const minimizeWindow = useCallback((appId: AppModule) => {
     setWindows(prev => prev.map(w => w.id === appId ? { ...w, isMinimized: true } : w));
     if (activeWindowId === appId) setActiveWindowId(null);
   }, [activeWindowId, setWindows]);
   
-  const toggleMaximize = useCallback((appId: AppModule): void => {
+  const toggleMaximize = useCallback((appId: AppModule) => {
     setWindows(prev => prev.map(w => {
         if (w.id === appId) {
             if (w.isMaximized) {
@@ -279,7 +279,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }));
   }, [setWindows]);
 
-  const tileWindows = useCallback((): void => {
+  const tileWindows = useCallback(() => {
     const visibleWindows = windows.filter(w => !w.isMinimized);
     const count = visibleWindows.length;
     if (count === 0) return;
@@ -313,7 +313,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }));
   }, [windows, setWindows]);
 
-  const updateWindowState = useCallback((appId: AppModule, updates: Partial<WindowConfig>): void => {
+  const updateWindowState = useCallback((appId: AppModule, updates: Partial<WindowConfig>) => {
     setWindows(prev => prev.map(w => w.id === appId ? { ...w, ...updates } : w));
   }, [setWindows]);
 
@@ -323,10 +323,10 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }
   }, [isMobileLayout, activeWindowId, openWindow]);
   
-  const handleCloseAll = (): void => setWindows([]);
+  const handleCloseAll = () => setWindows([]);
 
-  const handleStartTimer = (description: string, project: string): void => setActiveTimer({ startTime: Date.now(), description, project });
-  const handleStopTimer = (): void => {
+  const handleStartTimer = (description: string, project: string) => setActiveTimer({ startTime: Date.now(), description, project });
+  const handleStopTimer = () => {
     if (!activeTimer) return;
     const endTime = Date.now();
     const newEntry: TimeEntry = {
@@ -340,17 +340,17 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     setTimeEntries(prev => [newEntry, ...prev]);
     setActiveTimer(null);
   };
-  const handleAddNote = (category: string): void => {
+  const handleAddNote = (category: string) => {
     const newNote: Note = { id: `note-${Date.now()}`, title: 'New Note', content: '', category, createdAt: Date.now() };
     setNotes(prev => [newNote, ...prev]);
   };
-  const handleUpdateNote = (id: string, updates: Partial<Note>): void => setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
-  const handleDeleteNote = (id: string): void => setNotes(prev => prev.filter(n => n.id !== id));
-  const handleAddEvent = (event: Omit<Event, 'id'>): void => setEvents(prev => [...prev, { ...event, id: `event-${Date.now()}` }]);
-  const handleDeleteEvent = (id: string): void => setEvents(prev => prev.filter(e => e.id !== id));
-  const handleAddGoal = (goal: Omit<Goal, 'id'>): void => setGoals(prev => [...prev, { ...goal, id: `goal-${Date.now()}` }]);
+  const handleUpdateNote = (id: string, updates: Partial<Note>) => setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
+  const handleDeleteNote = (id: string) => setNotes(prev => prev.filter(n => n.id !== id));
+  const handleAddEvent = (event: Omit<Event, 'id'>) => setEvents(prev => [...prev, { ...event, id: `event-${Date.now()}` }]);
+  const handleDeleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
+  const handleAddGoal = (goal: Omit<Goal, 'id'>) => setGoals(prev => [...prev, { ...goal, id: `goal-${Date.now()}` }]);
   
-  const handleToggleGoal = (id: string): void => {
+  const handleToggleGoal = (id: string) => {
     const today = new Date().toISOString().split('T')[0];
     setGoals(prev => prev.map(g => {
         if (g.id === id) {
@@ -369,25 +369,25 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }));
   };
 
-  const handleDeleteGoal = (id: string): void => setGoals(prev => prev.filter(g => g.id !== id));
-  const handleAddClass = (cls: Class): void => setClasses(prev => [...prev, cls]);
-  const handleDeleteClass = (id: string): void => setClasses(prev => prev.filter(c => c.id !== id));
+  const handleDeleteGoal = (id: string) => setGoals(prev => prev.filter(g => g.id !== id));
+  const handleAddClass = (cls: Class) => setClasses(prev => [...prev, cls]);
+  const handleDeleteClass = (id: string) => setClasses(prev => prev.filter(c => c.id !== id));
   
-  const handleAddDeck = (title: string): void => setDecks(prev => [...prev, { id: `deck-${Date.now()}`, title, cards: [] }]);
-  const handleDeleteDeck = (id: string): void => setDecks(prev => prev.filter(d => d.id !== id));
-  const handleAddCard = (deckId: string, front: string, back: string): void => {
+  const handleAddDeck = (title: string) => setDecks(prev => [...prev, { id: `deck-${Date.now()}`, title, cards: [] }]);
+  const handleDeleteDeck = (id: string) => setDecks(prev => prev.filter(d => d.id !== id));
+  const handleAddCard = (deckId: string, front: string, back: string) => {
       setDecks(prev => prev.map(d => d.id === deckId ? {
           ...d,
           cards: [...d.cards, { id: `card-${Date.now()}`, front, back, box: 0, nextReview: Date.now() }]
       } : d));
   };
-  const handleUpdateCard = (deckId: string, cardId: string, updates: Partial<Flashcard>): void => {
+  const handleUpdateCard = (deckId: string, cardId: string, updates: Partial<Flashcard>) => {
       setDecks(prev => prev.map(d => d.id === deckId ? {
           ...d,
           cards: d.cards.map(c => c.id === cardId ? { ...c, ...updates } : c)
       } : d));
   };
-  const handleDeleteCard = (deckId: string, cardId: string): void => {
+  const handleDeleteCard = (deckId: string, cardId: string) => {
       setDecks(prev => prev.map(d => d.id === deckId ? {
           ...d,
           cards: d.cards.filter(c => c.id !== cardId)
@@ -395,7 +395,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
   };
 
 
-  const handleExportData = (): void => {
+  const handleExportData = () => {
       const allData = getAllData();
       const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -406,9 +406,9 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
       URL.revokeObjectURL(url);
   };
 
-  const handleImportData = (file: File): void => {
+  const handleImportData = (file: File) => {
       const reader = new FileReader();
-      reader.onload = (e): void => {
+      reader.onload = (e) => {
           try {
               const data = JSON.parse(e.target?.result as string) as Record<string, unknown>;
               onRestoreData(data);
@@ -421,12 +421,12 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
       reader.readAsText(file);
   };
 
-  const handleWipeData = (): void => {
+  const handleWipeData = () => {
       localStorage.clear();
       window.location.reload();
   };
   
-  const handleAiAction = (functionName: string, args: Record<string, unknown>): void => {
+  const handleAiAction = (functionName: string, args: Record<string, unknown>) => {
     switch (functionName) {
       case 'addTask': {
         const title = typeof args.title === 'string' ? args.title : 'New Task';
@@ -544,7 +544,7 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     }
   };
 
-  const t = (key: string): string => {
+  const t = (key: string) => {
     const lang = language as string;
     const k = key as string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -553,14 +553,14 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
     return (dict as any)[k] || (translations['en'] as any)[k] || key;
   };
 
-  const renderAppModule = (appId: AppModule): JSX.Element => {
+  const renderAppModule = (appId: AppModule) => {
     return (
       <Suspense fallback={
         <div className="flex items-center justify-center h-full w-full">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
         </div>
       }>
-        {(() : JSX.Element | null => {
+        {(() => {
           switch (appId) {
             case AppModule.DASHBOARD: return <Dashboard tasks={tasks} projects={projects} setProjects={setProjects} timeEntries={timeEntries} events={events} classes={classes} goals={goals} />;
             case AppModule.TASKS: return <TaskList tasks={tasks} projects={projects} setTasks={setTasks} setProjects={setProjects} />;
@@ -633,9 +633,9 @@ const App: React.FC<AppProps> = ({ user, onRestoreData }) => {
               onToggleDarkMode={() => setIsDarkMode(p => !p)}
               onNewTask={() => openWindow(AppModule.TASKS)}
               onOpenPreferences={() => openWindow(AppModule.SETTINGS)}
-              onCloseWindow={activeWindowId ? (): void => closeWindow(activeWindowId) : (): void => {}}
-              onMinimizeWindow={activeWindowId ? (): void => minimizeWindow(activeWindowId) : (): void => {}}
-              onToggleMaximize={activeWindowId ? (): void => toggleMaximize(activeWindowId) : (): void => {}}
+              onCloseWindow={activeWindowId ? () => closeWindow(activeWindowId) : () => {}}
+              onMinimizeWindow={activeWindowId ? () => minimizeWindow(activeWindowId) : () => {}}
+              onToggleMaximize={activeWindowId ? () => toggleMaximize(activeWindowId) : () => {}}
               onCloseAll={handleCloseAll}
               onTileWindows={tileWindows}
               windows={windows}

@@ -35,12 +35,12 @@ const weatherConditions: { [code: number]: { description: string; icon: React.El
     99: { description: 'Thunderstorm with heavy hail', icon: CloudRain },
 };
 
-const getWeatherInfo = (code: number): { description: string; icon: React.ElementType } => {
+const getWeatherInfo = (code: number) => {
     return weatherConditions[code] || { description: 'Unknown', icon: Sun };
 };
 
-const formatTime = (dateString: string): string => new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-const getDayOfWeek = (dateString: string): string => new Date(dateString).toLocaleDateString([], { weekday: 'short' });
+const formatTime = (dateString: string) => new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+const getDayOfWeek = (dateString: string) => new Date(dateString).toLocaleDateString([], { weekday: 'short' });
 
 
 interface WeatherData {
@@ -64,7 +64,7 @@ interface WeatherData {
     };
 }
 
-const CurrentWeatherDetails = ({ weatherData }: { weatherData: WeatherData }): JSX.Element => {
+const CurrentWeatherDetails = ({ weatherData }: { weatherData: WeatherData }) => {
     const { t } = useContext(LanguageContext);
     return (
     <div className="text-center w-full animate-fade-in pt-4">
@@ -91,7 +91,7 @@ const CurrentWeatherDetails = ({ weatherData }: { weatherData: WeatherData }): J
     );
 };
 
-const Forecast = ({ weatherData }: { weatherData: WeatherData }): JSX.Element => {
+const Forecast = ({ weatherData }: { weatherData: WeatherData }) => {
     const { t } = useContext(LanguageContext);
     return (
      <div className="w-full mt-6 animate-fade-in">
@@ -190,7 +190,7 @@ const Weather: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Run only on initial mount
     
-    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchInput(value);
 
@@ -228,7 +228,7 @@ const Weather: React.FC = () => {
         };
     }, []);
 
-    const handleSuggestionClick = (suggestion: { display_name: string; lat: string; lon: string }): void => {
+    const handleSuggestionClick = (suggestion: { display_name: string; lat: string; lon: string }) => {
         const { lat, lon, display_name } = suggestion;
         const bestName = display_name.split(',')[0];
         fetchWeather(parseFloat(lat), parseFloat(lon), bestName);
@@ -236,7 +236,7 @@ const Weather: React.FC = () => {
         setSuggestions([]);
     };
 
-    const handleSearch = async (e: React.FormEvent): Promise<void> => {
+    const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!searchInput.trim()) return;
         

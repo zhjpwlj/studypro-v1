@@ -29,13 +29,13 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ timeEntries, activeTimer, onS
     return () => clearInterval(interval);
   }, [activeTimer]);
 
-  const handleStart = (e: React.FormEvent | React.MouseEvent): void => {
+  const handleStart = (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
     if (!description.trim()) return;
     onStartTimer(description, project);
   };
 
-  const formatTime = (seconds: number): string => {
+  const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
     const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');

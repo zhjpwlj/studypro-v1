@@ -44,24 +44,24 @@ const Music: React.FC = () => {
     }
   }, [isPlaying, currentTrackIndex, t]);
 
-  const handleTimeUpdate = (): void => {
+  const handleTimeUpdate = () => {
     if(audioRef.current && audioRef.current.duration) {
       setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
     }
   };
 
-  const handleEnded = (): void => {
+  const handleEnded = () => {
     handleSkip('forward');
   };
 
-  const handleError = (e: React.SyntheticEvent<HTMLAudioElement, Event>): void => {
+  const handleError = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
       console.error("Audio Error:", e);
       setError(t('unableToPlay'));
       setIsPlaying(false);
       setIsBuffering(false);
   };
 
-  const handleSkip = (direction: 'forward' | 'backward'): void => {
+  const handleSkip = (direction: 'forward' | 'backward') => {
       const newIndex = direction === 'forward' 
         ? (currentTrackIndex + 1) % playlist.length
         : (currentTrackIndex - 1 + playlist.length) % playlist.length;
@@ -70,7 +70,7 @@ const Music: React.FC = () => {
       setError(null);
   };
   
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>): void => {
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
       if (!audioRef.current || !isFinite(audioRef.current.duration)) return;
       const bounds = e.currentTarget.getBoundingClientRect();
       const percent = Math.max(0, Math.min(1, (e.clientX - bounds.left) / bounds.width));
@@ -78,7 +78,7 @@ const Music: React.FC = () => {
       setProgress(percent * 100);
   };
 
-  const togglePlay = (): void => {
+  const togglePlay = () => {
       setError(null);
       setIsPlaying(!isPlaying);
   };

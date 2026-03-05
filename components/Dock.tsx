@@ -127,26 +127,26 @@ export default function Dock({ openWindows, onLaunch, onFocus, onToggleLaunchpad
   const mouseX = useMotionValue<number>(Infinity);
   const { t } = useContext(LanguageContext);
   
-  const isOpen = (appId: AppModule): boolean => openWindows.some(w => w.id === appId && !w.isMinimized);
+  const isOpen = (appId: AppModule) => openWindows.some(w => w.id === appId && !w.isMinimized);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (dockRef.current && !dockRef.current.contains(event.target as Node)) {
         setOpenFolder(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return (): void => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   
   const activeFolder = dockItems.find((i): i is DockFolder => typeof i === 'object' && i.type === 'folder' && i.name === openFolder);
 
-  const handleIconClick = (action: () => void): void => {
+  const handleIconClick = (action: () => void) => {
       setOpenFolder(null);
       action();
   };
 
-  const renderItem = (item: DockItem, index: number, isGhost: boolean): JSX.Element | null => {
+  const renderItem = (item: DockItem, index: number, isGhost: boolean) => {
       if (typeof item === 'object' && item.type === 'folder') {
         const isFolderActive = item.apps.some(appId => isOpen(appId));
         const Icon = item.icon;

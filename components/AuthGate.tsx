@@ -34,7 +34,7 @@ const AuthGate: React.FC = () => {
         document.documentElement.classList.toggle('dark', isDarkMode);
     }, [isDarkMode]);
     
-    const handleRestoreData = (data: Record<string, unknown>): void => {
+    const handleRestoreData = (data: Record<string, unknown>) => {
         try {
             // Define mapping of data keys to localStorage keys
             const dataMap: { [key: string]: string | { [key: string]: string } } = {
@@ -83,7 +83,7 @@ const AuthGate: React.FC = () => {
     };
     
     useEffect(() => {
-        const handleAuth = async (): Promise<void> => {
+        const handleAuth = async () => {
             try {
                 if (window.location.hash.includes('access_token')) {
                     setIsVerifying(true);
@@ -103,7 +103,7 @@ const AuthGate: React.FC = () => {
             }
         };
 
-        const restoreAndSetData = async (currentUser: User): Promise<void> => {
+        const restoreAndSetData = async (currentUser: User) => {
             try {
                 const { data, error } = await restoreData(currentUser);
                 if (error) {
@@ -123,7 +123,7 @@ const AuthGate: React.FC = () => {
 
         handleAuth();
 
-        const authListener = onAuthStateChange(async (newSession): Promise<void> => {
+        const authListener = onAuthStateChange(async (newSession) => {
             setSession(newSession);
             setUser(newSession?.user || null);
             setLoading(false);
@@ -134,12 +134,12 @@ const AuthGate: React.FC = () => {
             }
         });
 
-        return (): void => {
+        return () => {
             authListener?.unsubscribe();
         };
     }, []);
 
-    const handleEnterDemoMode = (): void => {
+    const handleEnterDemoMode = () => {
         setUser(demoUser);
         setSession({ user: demoUser }); 
         setLoading(false);

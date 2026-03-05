@@ -30,7 +30,7 @@ const Window: React.FC<WindowProps> = ({ children, config, onClose, onMinimize, 
   
   const { t } = useContext(LanguageContext);
 
-  const getTitle = (id: AppModule): string => {
+  const getTitle = (id: AppModule) => {
     return t(id.toLowerCase() as keyof typeof import('../utils/translations')['translations']['en']) || 'Application';
   };
 
@@ -48,7 +48,7 @@ const Window: React.FC<WindowProps> = ({ children, config, onClose, onMinimize, 
     }
   }, [config.isMinimized, config.id, config.y]);
 
-  const getEventCoords = (e: MouseEvent | TouchEvent): { x: number; y: number } => 'touches' in e ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY };
+  const getEventCoords = (e: MouseEvent | TouchEvent) => 'touches' in e ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY };
 
   const handleStart = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, action: 'drag' | { type: 'resize', direction: ResizeDirection }) => {
     if ('button' in e && e.button !== 0) return;

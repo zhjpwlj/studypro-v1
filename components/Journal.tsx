@@ -14,14 +14,14 @@ const Journal: React.FC<JournalProps> = ({ entries, onAddEntry }) => {
   const [newMood, setNewMood] = useState<JournalEntry['mood']>('neutral');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newContent.trim()) return;
     onAddEntry({ title: newTitle, content: newContent, mood: newMood });
     setNewTitle(''); setNewContent(''); setNewMood('neutral'); setIsWriting(false);
   };
 
-  const getMoodIcon = (mood: string): JSX.Element => {
+  const getMoodIcon = (mood: string) => {
     switch (mood) {
       case 'happy': return <Smile className="text-green-500" />;
       case 'focused': return <Zap className="text-yellow-500" />;

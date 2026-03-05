@@ -27,19 +27,19 @@ const Theme: React.FC<ThemeProps> = ({ isDarkMode, accentColor, onSetAccentColor
   const [customAccentColor, setCustomAccentColor] = useState(accentColor);
   const [customVideoUrl, setCustomVideoUrl] = useState('');
 
-  const handleCustomColorChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleCustomColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newColor = e.target.value;
     setCustomAccentColor(newColor);
     onSetAccentColor(newColor);
   }
 
-  const getYouTubeId = (url: string): string | null => {
+  const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  const handleCustomVideoSubmit = (e: React.FormEvent): void => {
+  const handleCustomVideoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const videoId = getYouTubeId(customVideoUrl);
     if (videoId) {

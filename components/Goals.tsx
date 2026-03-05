@@ -21,7 +21,7 @@ const Goals: React.FC<GoalsProps> = ({ goals, onAddGoal, onToggleGoal, onDeleteG
   const [newIcon, setNewIcon] = useState(ICONS[0]);
   const [newColor, setNewColor] = useState(COLORS[0]);
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
     onAddGoal({
@@ -36,7 +36,7 @@ const Goals: React.FC<GoalsProps> = ({ goals, onAddGoal, onToggleGoal, onDeleteG
     setIsAdding(false);
   };
 
-  const getLast7Days = (): Date[] => {
+  const getLast7Days = () => {
       const dates = [];
       for (let i = 6; i >= 0; i--) {
           const d = new Date();
@@ -49,7 +49,7 @@ const Goals: React.FC<GoalsProps> = ({ goals, onAddGoal, onToggleGoal, onDeleteG
   const last7Days = getLast7Days();
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const toggleHabitForToday = (goal: Goal): void => {
+  const toggleHabitForToday = (goal: Goal) => {
       // Logic for toggling today specifically. 
       // The parent prop `onToggleGoal` handles logic, we assume it toggles 'today'.
       // If we need to toggle specific past days, we'd need a more complex update function.
@@ -57,7 +57,7 @@ const Goals: React.FC<GoalsProps> = ({ goals, onAddGoal, onToggleGoal, onDeleteG
       onToggleGoal(goal.id);
   };
 
-  const isCompletedOn = (goal: Goal, dateStr: string): boolean => {
+  const isCompletedOn = (goal: Goal, dateStr: string) => {
       return goal.completedDates.includes(dateStr);
   };
 

@@ -58,7 +58,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, projects, setTasks, setProje
       return t('tasks');
   }, [activeFilter, projects, t]);
 
-  const handleAddProject = (): void => {
+  const handleAddProject = () => {
     if (!newProjectName.trim()) return;
     const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
     const newProject: Project = { id: `proj-${Date.now()}`, name: newProjectName.trim(), color: randomColor };
@@ -68,7 +68,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, projects, setTasks, setProje
     setIsAddingProject(false);
   };
 
-  const handleAddTask = (e: React.FormEvent): void => {
+  const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskName.trim()) return;
     
@@ -91,7 +91,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, projects, setTasks, setProje
     setNewTaskName('');
   };
 
-  const handleToggleTask = (taskId: string): void => {
+  const handleToggleTask = (taskId: string) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, completed: !t.completed, status: !t.completed ? 'done' : 'todo' } : t));
   };
 

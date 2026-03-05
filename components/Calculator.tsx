@@ -12,7 +12,7 @@ const Calculator: React.FC = () => {
   
 
 
-  const inputDigit = (digit: string): void => {
+  const inputDigit = (digit: string) => {
     if (waitingForOperand) {
       setDisplayValue(digit);
       setWaitingForOperand(false);
@@ -21,7 +21,7 @@ const Calculator: React.FC = () => {
     }
   };
 
-  const inputDecimal = (): void => {
+  const inputDecimal = () => {
     if (waitingForOperand) {
       setDisplayValue('0.');
       setWaitingForOperand(false);
@@ -32,13 +32,13 @@ const Calculator: React.FC = () => {
     }
   };
 
-  const clear = (): void => {
+  const clear = () => {
     setDisplayValue('0');
     setExpression('');
     setWaitingForOperand(false);
   };
 
-  const performOperation = (op: string): void => {
+  const performOperation = (op: string) => {
     if (op === '=') {
         try {
             // Replace visual operators with JS operators
@@ -65,7 +65,7 @@ const Calculator: React.FC = () => {
     }
   };
 
-  const performScientific = (func: string): void => {
+  const performScientific = (func: string) => {
       const val = parseFloat(displayValue);
       let res = 0;
       switch(func) {
@@ -85,7 +85,7 @@ const Calculator: React.FC = () => {
       setWaitingForOperand(true);
   };
 
-  const Button: React.FC<{ onClick: () => void; className?: string; children: React.ReactNode }> = ({ onClick, className, children }): JSX.Element => (
+  const Button: React.FC<{ onClick: () => void; className?: string; children: React.ReactNode }> = ({ onClick, className, children }) => (
     <button onClick={onClick} className={`rounded-xl flex items-center justify-center text-xl font-medium transition-all active:scale-95 shadow-sm hover:brightness-110 ${className}`}>
       {children}
     </button>

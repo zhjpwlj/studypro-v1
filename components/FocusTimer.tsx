@@ -43,24 +43,24 @@ const FocusTimer: React.FC = () => {
     return () => { audio.pause(); };
   }, [activeSound, sounds]);
 
-  const toggleTimer = (): void => setIsActive(!isActive);
-  const resetTimer = (): void => {
+  const toggleTimer = () => setIsActive(!isActive);
+  const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(mode === 'focus' ? focusDuration : shortBreakDuration);
   };
-  const changeMode = (newMode: 'focus' | 'short-break'): void => {
+  const changeMode = (newMode: 'focus' | 'short-break') => {
     setMode(newMode);
     setIsActive(false);
     setTimeLeft(newMode === 'focus' ? focusDuration : shortBreakDuration);
   };
-  const applyPreset = (focusMin: number, breakMin: number): void => {
+  const applyPreset = (focusMin: number, breakMin: number) => {
     setFocusDuration(focusMin * 60);
     setShortBreakDuration(breakMin * 60);
     changeMode('focus');
     setTimeLeft(focusMin * 60);
   };
 
-  const formatTime = (s: number): string => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+  const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
   const totalDuration = mode === 'focus' ? focusDuration : shortBreakDuration;
   const progress = timeLeft / totalDuration;
   const circumference = 2 * Math.PI * 100;

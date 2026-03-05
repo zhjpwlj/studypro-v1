@@ -66,17 +66,17 @@ const Pomodoro: React.FC = () => {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isActive, mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toggleTimer = (): void => setIsActive(!isActive);
-  const resetTimer = (): void => {
+  const toggleTimer = () => setIsActive(!isActive);
+  const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(mode === 'focus' ? focusDuration : shortBreakDuration);
   };
-  const changeMode = (newMode: 'focus' | 'short-break'): void => {
+  const changeMode = (newMode: 'focus' | 'short-break') => {
     setMode(newMode);
     setIsActive(false);
     setTimeLeft(newMode === 'focus' ? focusDuration : shortBreakDuration);
   };
-  const applyPreset = (focusMin: number, breakMin: number): void => {
+  const applyPreset = (focusMin: number, breakMin: number) => {
     setFocusDuration(focusMin * 60);
     setShortBreakDuration(breakMin * 60);
     if (mode === 'focus') {
@@ -87,7 +87,7 @@ const Pomodoro: React.FC = () => {
     setIsActive(false);
   };
 
-  const formatTime = (s: number): string => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+  const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
   const totalDuration = mode === 'focus' ? focusDuration : shortBreakDuration;
   const progress = totalDuration > 0 ? timeLeft / totalDuration : 0;
   const circumference = 2 * Math.PI * 100;
@@ -155,13 +155,13 @@ const Tracker: React.FC<PomodoroTimerProps> = ({ timeEntries, activeTimer, onSta
     return () => clearInterval(interval);
   }, [activeTimer]);
 
-  const handleStart = (e: React.FormEvent | React.MouseEvent): void => {
+  const handleStart = (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
     if (!description.trim()) return;
     onStartTimer(description, project);
   };
 
-  const formatTime = (seconds: number): string => {
+  const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
     const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');

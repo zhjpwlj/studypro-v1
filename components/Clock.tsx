@@ -9,16 +9,16 @@ const cities = [
   { name: 'Sydney', timeZone: 'Australia/Sydney' },
 ];
 
-const WorldClock = (): JSX.Element => {
+const WorldClock = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const timerId = setInterval((): void => setTime(new Date()), 1000);
-    return (): void => clearInterval(timerId);
+    const timerId = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timerId);
   }, []);
 
-  const formatTime = (date: Date, timeZone: string): string => date.toLocaleTimeString('en-US', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false });
-  const formatDate = (date: Date, timeZone: string): string => date.toLocaleDateString('en-US', { timeZone, weekday: 'short', month: 'short', day: 'numeric' });
+  const formatTime = (date: Date, timeZone: string) => date.toLocaleTimeString('en-US', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false });
+  const formatDate = (date: Date, timeZone: string) => date.toLocaleDateString('en-US', { timeZone, weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
     <div className="p-6 space-y-6">
@@ -42,29 +42,29 @@ const WorldClock = (): JSX.Element => {
   );
 };
 
-const formatStopwatchTime = (time: number): string => {
+const formatStopwatchTime = (time: number) => {
     const milliseconds = `00${time % 1000}`.slice(-3);
     const seconds = `0${Math.floor(time / 1000) % 60}`.slice(-2);
     const minutes = `0${Math.floor(time / 60000) % 60}`.slice(-2);
     return `${minutes}:${seconds}.${milliseconds}`;
 };
 
-const Stopwatch = (): JSX.Element => {
+const Stopwatch = () => {
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [laps, setLaps] = useState<number[]>([]);
     const timerRef = useRef<number | null>(null);
 
-    const handleStartStop = (): void => setIsRunning(!isRunning);
-    const handleReset = (): void => { setIsRunning(false); setTime(0); setLaps([]); };
-    const handleLap = (): void => { if (isRunning) setLaps(prev => [time, ...prev]); };
+    const handleStartStop = () => setIsRunning(!isRunning);
+    const handleReset = () => { setIsRunning(false); setTime(0); setLaps([]); };
+    const handleLap = () => { if (isRunning) setLaps(prev => [time, ...prev]); };
 
     useEffect(() => {
         if (isRunning) {
             const startTime = Date.now() - time;
-            timerRef.current = window.setInterval((): void => setTime(Date.now() - startTime), 10);
+            timerRef.current = window.setInterval(() => setTime(Date.now() - startTime), 10);
         } else if (timerRef.current) clearInterval(timerRef.current);
-        return (): void => { if (timerRef.current) clearInterval(timerRef.current) };
+        return () => { if (timerRef.current) clearInterval(timerRef.current) };
     }, [isRunning, time]);
 
     return (
@@ -92,7 +92,7 @@ const Stopwatch = (): JSX.Element => {
     );
 };
 
-const Timer = (): JSX.Element => {
+const Timer = () => {
     const [duration, setDuration] = useState(300);
     const [timeLeft, setTimeLeft] = useState(duration);
     const [isActive, setIsActive] = useState(false);
@@ -105,15 +105,15 @@ const Timer = (): JSX.Element => {
 
     useEffect(() => {
         if (isActive && timeLeft > 0) {
-            timerRef.current = window.setInterval((): void => setTimeLeft(prev => prev - 1), 1000);
+            timerRef.current = window.setInterval(() => setTimeLeft(prev => prev - 1), 1000);
         } else if (timeLeft === 0 && isActive) {
             setIsActive(false);
             alarmAudioRef.current?.play();
         }
-        return (): void => { if (timerRef.current) clearInterval(timerRef.current) };
+        return () => { if (timerRef.current) clearInterval(timerRef.current) };
     }, [isActive, timeLeft]);
     
-    const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>, unit: 'h' | 'm' | 's'): void => {
+    const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>, unit: 'h' | 'm' | 's') => {
         const value = parseInt(e.target.value, 10) || 0;
         const { h, m, s } = formatTime(duration);
         let newDuration;
@@ -125,7 +125,7 @@ const Timer = (): JSX.Element => {
         if(!isActive) setTimeLeft(newDuration);
     };
     
-    const formatTime = (s: number): { h: number; m: number; s: number } => ({ h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 });
+    const formatTime = (s: number) => ({ h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 });
     const {h, m, s} = formatTime(timeLeft);
     const progress = duration > 0 ? timeLeft / duration : 0;
     const circumference = 2 * Math.PI * 100;
@@ -196,7 +196,7 @@ const Clock: React.FC<ClockProps> = ({ events, tasks, classes }) => {
         { id: 'timer', label: 'Timer', icon: Hourglass },
     ];
 
-    const renderContent = (): JSX.Element | null => {
+    const renderContent = () => {
         switch (activeTab) {
             case 'world': return <WorldClock />;
             case 'agenda': return <Agenda events={events} tasks={tasks} classes={classes} />;
