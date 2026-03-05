@@ -323,6 +323,8 @@ const Settings: React.FC<SettingsProps> = (props) => {
                 <li>Optimized cloud sync frequency to prevent excessive API calls</li>
                 <li>Improved accessibility with ARIA labels</li>
                 <li>Enhanced UI responsiveness for mobile devices</li>
+                <li>Fixed TypeScript type error in ConfirmationModal to support ReactNode messages</li>
+                <li>Fixed linting error in ConfirmationModal by removing unused React import</li>
               </ul>
             </div>
           </div>

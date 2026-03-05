@@ -24,3 +24,4 @@
 - Improved ID generation uniqueness in Class Schedule.
 - Optimized interval logic in Pomodoro Timer for better performance.
 - Fixed TypeScript type error in ConfirmationModal to support ReactNode messages.
+- Fixed linting error in ConfirmationModal by removing unused React import.
