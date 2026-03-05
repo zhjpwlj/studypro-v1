@@ -20,7 +20,7 @@ const Login: React.FC<LoginProps> = ({ onEnterDemoMode }) => {
   
   const [language, setLanguage] = usePersistentState<Language>('focusflow-language', 'en');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (loading) return;
     

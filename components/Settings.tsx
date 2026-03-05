@@ -37,7 +37,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
   
   const [activeWallpaperCategory, setActiveWallpaperCategory] = useState(wallpaperCategories[0]);
 
-  const fetchLastSync = async () => {
+  const fetchLastSync = async (): Promise<void> => {
     try {
         const time = await getLastSyncTime();
         setLastSynced(time ? new Date(time).toLocaleString() : 'Never');
@@ -50,7 +50,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
     if (activeTab === 'sync' && !lastSynced) fetchLastSync();
   }, [activeTab, lastSynced]);
 
-  const handleBackup = async () => {
+  const handleBackup = async (): Promise<void> => {
     setIsSyncing(true);
     setSyncError(null);
     try {
@@ -64,7 +64,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
     }
   };
 
-  const handleRestore = async () => {
+  const handleRestore = async (): Promise<void> => {
     setIsSyncing(true);
     setSyncError(null);
     try {
@@ -79,9 +79,9 @@ const Settings: React.FC<SettingsProps> = (props) => {
     }
   };
   
-  const handleSignOut = async () => await signOut();
+  const handleSignOut = async (): Promise<void> => await signOut();
 
-  const renderGeneralTab = () => (
+  const renderGeneralTab = (): JSX.Element => (
      <div className="space-y-8 animate-fade-in">
         <section>
           <h3 className="text-lg font-bold mb-3 text-slate-900 dark:text-white">{t('generalSettings')}</h3>
@@ -164,7 +164,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
       </div>
   );
 
-  const renderAppearanceTab = () => (
+  const renderAppearanceTab = (): JSX.Element => (
     <div className="space-y-8 animate-fade-in">
         <section>
           <h3 className="text-lg font-bold mb-3 text-slate-900 dark:text-white">{t('appearanceTitle')}</h3>
@@ -213,7 +213,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
     </div>
   );
   
-  const renderSyncTab = () => (
+  const renderSyncTab = (): JSX.Element => (
     <div className="space-y-8 animate-fade-in">
         <section>
           <h3 className="text-lg font-bold mb-3 text-slate-900 dark:text-white">{t('accountTitle')}</h3>

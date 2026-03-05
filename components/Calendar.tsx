@@ -14,17 +14,17 @@ const cities = [
   { name: 'Sydney', timeZone: 'Australia/Sydney' },
 ];
 
-const WorldClock = () => {
+const WorldClock = (): JSX.Element => {
   const { t, language } = useContext(LanguageContext);
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const timerId = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timerId);
+    const timerId = setInterval((): void => setTime(new Date()), 1000);
+    return (): void => clearInterval(timerId);
   }, []);
 
-  const formatTime = (date: Date, timeZone: string) => date.toLocaleTimeString('en-US', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false });
-  const formatDate = (date: Date, timeZone: string) => date.toLocaleDateString(language === 'en' ? 'en-US' : language === 'jp' ? 'ja-JP' : 'zh-CN', { timeZone, weekday: 'short', month: 'short', day: 'numeric' });
+  const formatTime = (date: Date, timeZone: string): string => date.toLocaleTimeString('en-US', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false });
+  const formatDate = (date: Date, timeZone: string): string => date.toLocaleDateString(language === 'en' ? 'en-US' : language === 'jp' ? 'ja-JP' : 'zh-CN', { timeZone, weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
     <div className="p-6 space-y-6 animate-fade-in h-full overflow-y-auto">
@@ -48,30 +48,30 @@ const WorldClock = () => {
   );
 };
 
-const formatStopwatchTime = (time: number) => {
+const formatStopwatchTime = (time: number): string => {
     const milliseconds = `00${time % 1000}`.slice(-3);
     const seconds = `0${Math.floor(time / 1000) % 60}`.slice(-2);
     const minutes = `0${Math.floor(time / 60000) % 60}`.slice(-2);
     return `${minutes}:${seconds}.${milliseconds}`;
 };
 
-const Stopwatch = () => {
+const Stopwatch = (): JSX.Element => {
     const { t } = useContext(LanguageContext);
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [laps, setLaps] = useState<number[]>([]);
     const timerRef = useRef<number | null>(null);
 
-    const handleStartStop = () => setIsRunning(!isRunning);
-    const handleReset = () => { setIsRunning(false); setTime(0); setLaps([]); };
-    const handleLap = () => { if (isRunning) setLaps(prev => [time, ...prev]); };
+    const handleStartStop = (): void => setIsRunning(!isRunning);
+    const handleReset = (): void => { setIsRunning(false); setTime(0); setLaps([]); };
+    const handleLap = (): void => { if (isRunning) setLaps(prev => [time, ...prev]); };
 
     useEffect(() => {
         if (isRunning) {
             const startTime = Date.now() - time;
-            timerRef.current = window.setInterval(() => setTime(Date.now() - startTime), 10);
+            timerRef.current = window.setInterval((): void => setTime(Date.now() - startTime), 10);
         } else if (timerRef.current) clearInterval(timerRef.current);
-        return () => { if (timerRef.current) clearInterval(timerRef.current) };
+        return (): void => { if (timerRef.current) clearInterval(timerRef.current) };
     }, [isRunning, time]);
 
     return (
@@ -99,7 +99,7 @@ const Stopwatch = () => {
     );
 };
 
-const Timer = () => {
+const Timer = (): JSX.Element => {
     const { t } = useContext(LanguageContext);
     const [duration, setDuration] = useState(300);
     const [timeLeft, setTimeLeft] = useState(duration);
@@ -113,15 +113,15 @@ const Timer = () => {
 
     useEffect(() => {
         if (isActive && timeLeft > 0) {
-            timerRef.current = window.setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+            timerRef.current = window.setInterval((): void => setTimeLeft(prev => prev - 1), 1000);
         } else if (timeLeft === 0 && isActive) {
             setIsActive(false);
             alarmAudioRef.current?.play();
         }
-        return () => { if (timerRef.current) clearInterval(timerRef.current) };
+        return (): void => { if (timerRef.current) clearInterval(timerRef.current) };
     }, [isActive, timeLeft]);
     
-    const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>, unit: 'h' | 'm' | 's') => {
+    const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>, unit: 'h' | 'm' | 's'): void => {
         const value = parseInt(e.target.value, 10) || 0;
         const { h, m, s } = formatTimeParts(duration);
         let newDuration;
@@ -133,7 +133,7 @@ const Timer = () => {
         if(!isActive) setTimeLeft(newDuration);
     };
     
-    const formatTimeParts = (s: number) => ({ h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 });
+    const formatTimeParts = (s: number): { h: number; m: number; s: number } => ({ h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 });
     const {h, m, s} = formatTimeParts(timeLeft);
     const progress = duration > 0 ? timeLeft / duration : 0;
     const circumference = 2 * Math.PI * 100;
@@ -186,7 +186,7 @@ interface CalendarProps {
   onDeleteClass: (id: string) => void;
 }
 
-const CalendarView: React.FC<Pick<CalendarProps, 'events' | 'tasks' | 'classes' | 'onAddEvent' | 'onDeleteEvent'>> = ({ events, tasks, classes, onAddEvent, onDeleteEvent }) => {
+const CalendarView: React.FC<Pick<CalendarProps, 'events' | 'tasks' | 'classes' | 'onAddEvent' | 'onDeleteEvent'>> = ({ events, tasks, classes, onAddEvent, onDeleteEvent }): JSX.Element => {
     const { t, language } = useContext(LanguageContext);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -195,7 +195,7 @@ const CalendarView: React.FC<Pick<CalendarProps, 'events' | 'tasks' | 'classes' 
     const [isProcessing, setIsProcessing] = useState(false);
     
     // Calendar Generation
-    const getDaysInMonth = (date: Date) => {
+    const getDaysInMonth = (date: Date): { days: number; firstDay: number } => {
         const year = date.getFullYear();
         const month = date.getMonth();
         const days = new Date(year, month + 1, 0).getDate();
@@ -210,10 +210,10 @@ const CalendarView: React.FC<Pick<CalendarProps, 'events' | 'tasks' | 'classes' 
         return null;
     });
 
-    const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    const prevMonth = (): void => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const nextMonth = (): void => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
 
-    const handleQuickAdd = async (e: React.FormEvent) => {
+    const handleQuickAdd = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
         if (!quickAddText.trim()) return;
         setIsProcessing(true);

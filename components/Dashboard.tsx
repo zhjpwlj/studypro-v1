@@ -109,12 +109,12 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, projects, setProjects, tim
 
     }, [events, tasks, classes, todayStr]);
 
-    const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedProjectId(e.target.value);
-    const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>): void => setSelectedProjectId(e.target.value);
+    const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setProjects(prev => prev.map(p => p.id === selectedProjectId ? { ...p, color: e.target.value } : p));
     };
 
-    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: { cx: number; cy: number; midAngle: number; innerRadius: number; outerRadius: number; percent: number; }) => {
+    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: { cx: number; cy: number; midAngle: number; innerRadius: number; outerRadius: number; percent: number; }): JSX.Element | null => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
         const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));

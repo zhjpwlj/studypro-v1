@@ -10,15 +10,15 @@ const TABLE_NAME = 'user_data_backups';
 
 // --- Auth Functions ---
 
-export const signUp = (email: string, password: string) => {
+export const signUp = (email: string, password: string): Promise<any> => {
     return supabase.auth.signUp({ email, password });
 };
 
-export const signIn = (email: string, password: string) => {
+export const signIn = (email: string, password: string): Promise<any> => {
     return supabase.auth.signInWithPassword({ email, password });
 };
 
-export const signOut = () => {
+export const signOut = (): Promise<any> => {
     return supabase.auth.signOut();
 };
 
@@ -31,7 +31,7 @@ export const getSession = async (): Promise<{ session: Session | null }> => {
     return { session: data.session };
 };
 
-export const onAuthStateChange = (callback: (session: Session | null) => void) => {
+export const onAuthStateChange = (callback: (session: Session | null) => void): any => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         callback(session);
     });
@@ -51,7 +51,7 @@ const getUser = async (): Promise<User | null> => {
 /**
  * Sanitizes an object by removing circular references.
  */
-const sanitizeData = (data: unknown) => {
+const sanitizeData = (data: unknown): any => {
     const seen = new WeakSet();
     return JSON.parse(JSON.stringify(data, (_key, value) => {
         if (typeof value === "object" && value !== null) {
@@ -70,7 +70,7 @@ const sanitizeData = (data: unknown) => {
  * or update it if it does.
  * @param data - The JSON object of the user's application data.
  */
-export const backupData = async (user: User, data: Record<string, unknown>) => {
+export const backupData = async (user: User, data: Record<string, unknown>): Promise<{ error: any }> => {
   if (!user) return { error: { message: "User not authenticated" } };
 
   try {
@@ -89,7 +89,7 @@ export const backupData = async (user: User, data: Record<string, unknown>) => {
 /**
  * Restores the user's data from Supabase.
  */
-export const restoreData = async (user: User) => {
+export const restoreData = async (user: User): Promise<{ data: any; error: any }> => {
   if (!user) return { data: null, error: { message: "User not authenticated" } };
 
   const { data, error } = await supabase

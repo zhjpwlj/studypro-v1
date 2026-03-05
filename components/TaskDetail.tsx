@@ -45,16 +45,16 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
   }, [setTasks, taskId]);
 
-  const handleTitleBlur = () => {
+  const handleTitleBlur = (): void => {
     if (title.trim() === '') setTitle(task?.title || '');
     else if (title !== task?.title) updateTask({ title: title.trim() });
   };
 
-  const handleNotesBlur = () => {
+  const handleNotesBlur = (): void => {
     if (notes !== task?.notes) updateTask({ notes });
   };
 
-  const handleAddSubtask = () => {
+  const handleAddSubtask = (): void => {
     if (!newSubtask.trim()) return;
     const newSub: Subtask = { id: `sub-${Date.now()}`, title: newSubtask.trim(), completed: false };
     const newSubtasks = [...(task?.subtasks || []), newSub];
@@ -62,24 +62,24 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
     setNewSubtask('');
   };
   
-  const handleToggleSubtask = (subtaskId: string) => {
+  const handleToggleSubtask = (subtaskId: string): void => {
     const newSubtasks = task?.subtasks?.map(st => 
       st.id === subtaskId ? { ...st, completed: !st.completed } : st
     );
     updateTask({ subtasks: newSubtasks });
   };
   
-  const handleDeleteSubtask = (subtaskId: string) => {
+  const handleDeleteSubtask = (subtaskId: string): void => {
     const newSubtasks = task?.subtasks?.filter(st => st.id !== subtaskId);
     updateTask({ subtasks: newSubtasks });
   };
   
-  const startEditingSubtask = (subtask: Subtask) => {
+  const startEditingSubtask = (subtask: Subtask): void => {
       setEditingSubtaskId(subtask.id);
       setEditingSubtaskTitle(subtask.title);
   }
 
-  const saveSubtaskEdit = () => {
+  const saveSubtaskEdit = (): void => {
       if (!editingSubtaskId || !editingSubtaskTitle.trim()) {
           setEditingSubtaskId(null);
           return;
@@ -91,12 +91,12 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
       setEditingSubtaskId(null);
   }
 
-  const handleDeleteTask = () => {
+  const handleDeleteTask = (): void => {
     onClose();
     setTasks(prev => prev.filter(t => t.id !== taskId));
   };
   
-  const handleGenerateSubtasks = async () => {
+  const handleGenerateSubtasks = async (): Promise<void> => {
     if (!task) return;
     setIsGeneratingSubtasks(true);
     const generated = await generateSubtasks(task.title, task.notes);
@@ -109,20 +109,20 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
     setIsGeneratingSubtasks(false);
   };
   
-  const handleAddAttachment = () => {
+  const handleAddAttachment = (): void => {
       const name = prompt("Enter file name (simulated upload):");
       if(name) {
           updateTask({ attachments: [...(task?.attachments || []), name] });
       }
   };
   
-  const removeAttachment = (index: number) => {
+  const removeAttachment = (index: number): void => {
       const newAtt = [...(task?.attachments || [])];
       newAtt.splice(index, 1);
       updateTask({ attachments: newAtt });
   };
 
-  const handleAddTag = (e: React.FormEvent) => {
+  const handleAddTag = (e: React.FormEvent): void => {
       e.preventDefault();
       if(!newTag.trim()) return;
       const currentTags = task?.tags || [];
@@ -132,11 +132,11 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
       setNewTag('');
   };
 
-  const removeTag = (tag: string) => {
+  const removeTag = (tag: string): void => {
       updateTask({ tags: (task?.tags || []).filter(t => t !== tag) });
   };
 
-  const handleAddLink = (e: React.FormEvent) => {
+  const handleAddLink = (e: React.FormEvent): void => {
       e.preventDefault();
       if(!newLinkUrl.trim()) return;
       const currentLinks = task?.links || [];
@@ -144,12 +144,12 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
       setNewLinkUrl('');
   };
 
-  const removeLink = (id: string) => {
+  const removeLink = (id: string): void => {
       updateTask({ links: (task?.links || []).filter(l => l.id !== id) });
   };
 
   // Counter functions
-  const handleAddCounter = (e: React.FormEvent) => {
+  const handleAddCounter = (e: React.FormEvent): void => {
       e.preventDefault();
       if (!newCounterName.trim()) return;
       const newCounter: Counter = { id: `cnt-${Date.now()}`, name: newCounterName.trim(), count: 0, target: 3 };
@@ -157,13 +157,13 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ taskId, tasks, projects, setTas
       setNewCounterName('');
   }
 
-  const updateCounter = (id: string, delta: number) => {
+  const updateCounter = (id: string, delta: number): void => {
       updateTask({
           counters: task?.counters?.map(c => c.id === id ? { ...c, count: Math.max(0, c.count + delta) } : c)
       });
   }
   
-  const deleteCounter = (id: string) => {
+  const deleteCounter = (id: string): void => {
       updateTask({ counters: (task?.counters || []).filter(c => c.id !== id) });
   }
 

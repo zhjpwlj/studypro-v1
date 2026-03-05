@@ -20,7 +20,7 @@ interface MenuBarProps {
   onFocusWindow: (appId: AppModule) => void;
 }
 
-const getTitle = (id: AppModule, t: (key: keyof typeof translations['en']) => string) => {
+const getTitle = (id: AppModule, t: (key: keyof typeof translations['en']) => string): string => {
   return t(id.toLowerCase() as keyof typeof translations['en']);
 };
 
@@ -55,17 +55,17 @@ const MenuBar: React.FC<MenuBarProps> = (props) => {
     };
   }, []);
 
-  const handleMenuClick = (menu: string) => {
+  const handleMenuClick = (menu: string): void => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
   
-  const handleItemClick = (action?: () => void) => {
+  const handleItemClick = (action?: () => void): void => {
       action?.();
       setOpenMenu(null);
   }
 
-  const formatTime = (date: Date) => date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  const formatDate = (date: Date) => date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  const formatTime = (date: Date): string => date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const formatDate = (date: Date): string => date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 
   const { isDarkMode, onToggleDarkMode, onNewTask, onOpenPreferences, onCloseWindow, onMinimizeWindow, onToggleMaximize, onCloseAll, onTileWindows, windows, activeWindowId, onFocusWindow } = props;
   const hasActiveWindow = !!activeWindowId;

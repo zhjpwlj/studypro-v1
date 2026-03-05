@@ -22,7 +22,7 @@ const StudySession: React.FC<{ deck: Deck, onFinish: () => void, onUpdateCard: (
 
     const currentCard = queue[currentIndex];
 
-    const handleRate = (difficulty: 'easy' | 'good' | 'hard' | 'again') => {
+    const handleRate = (difficulty: 'easy' | 'good' | 'hard' | 'again'): void => {
         // Simple SRS Logic (Leitner-ish)
         let newBox = currentCard.box;
         let nextReview = Date.now();
@@ -118,7 +118,7 @@ const Flashcards: React.FC<FlashcardsProps> = ({ decks, onAddDeck, onDeleteDeck,
 
   const activeDeck = decks.find(d => d.id === activeDeckId);
 
-  const handleCreateDeck = (e: React.FormEvent) => {
+  const handleCreateDeck = (e: React.FormEvent): void => {
       e.preventDefault();
       if(newDeckTitle.trim()) {
           onAddDeck(newDeckTitle);
@@ -127,7 +127,7 @@ const Flashcards: React.FC<FlashcardsProps> = ({ decks, onAddDeck, onDeleteDeck,
       }
   };
 
-  const handleCreateCard = (e: React.FormEvent) => {
+  const handleCreateCard = (e: React.FormEvent): void => {
       e.preventDefault();
       if(front.trim() && back.trim() && activeDeckId) {
           onAddCard(activeDeckId, front, back);

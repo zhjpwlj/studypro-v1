@@ -32,11 +32,11 @@ const ChatView: React.FC<ChatViewProps> = ({ t, onAiAction }) => {
     scrollToBottom();
   }, [messages]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (): void => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSend = async () => {
+  const handleSend = async (): Promise<void> => {
     if (!input.trim() || !chatSessionRef.current) return;
 
     const userMessage: ChatMessage = { id: Date.now().toString(), role: 'user', text: input };
@@ -85,7 +85,7 @@ const ChatView: React.FC<ChatViewProps> = ({ t, onAiAction }) => {
     }
   };
   
-  const handleConfirmAction = async (messageId: string, funcCall: FunctionCall) => {
+  const handleConfirmAction = async (messageId: string, funcCall: FunctionCall): Promise<void> => {
     setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, isAwaitingConfirmation: false, isConfirmed: true } : msg));
     onAiAction(funcCall.name || 'unknown', funcCall.args || {});
 
@@ -111,7 +111,7 @@ const ChatView: React.FC<ChatViewProps> = ({ t, onAiAction }) => {
     }
   };
 
-  const handleCancelAction = async (messageId: string, funcCall: FunctionCall) => {
+  const handleCancelAction = async (messageId: string, funcCall: FunctionCall): Promise<void> => {
     setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, isAwaitingConfirmation: false, isCancelled: true } : msg));
 
     setIsLoading(true);
@@ -135,7 +135,7 @@ const ChatView: React.FC<ChatViewProps> = ({ t, onAiAction }) => {
     }
   };
   
-  const renderConfirmation = (msg: ChatMessage) => {
+  const renderConfirmation = (msg: ChatMessage): JSX.Element => {
     const { name, args } = msg.functionCall!;
     let description = `${t('runActionPrompt')} ${name}?`;
     

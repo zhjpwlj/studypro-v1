@@ -25,15 +25,15 @@ const ClassSchedule: React.FC<ClassScheduleProps> = ({ classes, onAddClass, onDe
   const [tempStart, setTempStart] = useState('09:00');
   const [tempEnd, setTempEnd] = useState('10:30');
 
-  const handleAddSession = () => {
+  const handleAddSession = (): void => {
     setSessions([...sessions, { dayOfWeek: tempDay, startTime: tempStart, endTime: tempEnd }]);
   };
 
-  const removeSession = (index: number) => {
+  const removeSession = (index: number): void => {
     setSessions(sessions.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     if (!name.trim()) return;
 
@@ -51,7 +51,7 @@ const ClassSchedule: React.FC<ClassScheduleProps> = ({ classes, onAddClass, onDe
     resetForm();
   };
 
-  const resetForm = () => {
+  const resetForm = (): void => {
     setName('');
     setInstructor('');
     setLocation('');
@@ -60,7 +60,7 @@ const ClassSchedule: React.FC<ClassScheduleProps> = ({ classes, onAddClass, onDe
   };
 
   // Sort classes by day and time for the list view
-  const getClassesForDay = (dayIndex: number) => {
+  const getClassesForDay = (dayIndex: number): (Class & { session: ClassSession })[] => {
     return classes.flatMap(c => 
       c.sessions
         .filter(s => s.dayOfWeek === dayIndex)
