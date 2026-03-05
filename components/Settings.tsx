@@ -23,6 +23,7 @@ interface SettingsProps {
   onSetWallpaper: (wallpaperId: string) => void;
 }
 
+// Settings component for managing application preferences
 const Settings: React.FC<SettingsProps> = (props) => {
   const { onExportData, onImportData, onWipeData, getAllData, onRestoreData, user, isDarkMode, onToggleDarkMode, accentColor, onSetAccentColor, wallpaper, onSetWallpaper } = props;
   const [activeTab, setActiveTab] = useState('general');
