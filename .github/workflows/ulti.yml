@@ -1,0 +1,251 @@
+name: 🚀 FocusFlow Ultra Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deploy target
+        type: choice
+        options: [both, github-pages, netlify]
+        default: both
+      mode:
+        description: Deployment mode
+        type: choice
+        options: [preview, production]
+        default: preview
+      bundle_limit_kb:
+        description: Bundle size limit (KB)
+        type: number
+        default: 5000
+      lighthouse_threshold:
+        description: Lighthouse performance threshold
+        type: number
+        default: 80
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: ultra-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  DIST_DIR: dist
+
+# ===============================
+# 1️⃣ BUILD ONCE
+# ===============================
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check (strict)
+        run: npm run typecheck || npx tsc --noEmit
+
+      - name: Lint (strict)
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify dist exists
+        run: |
+          if [ ! -d "${{ env.DIST_DIR }}" ]; then
+            echo "Build failed: dist not found"
+            exit 1
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: ${{ env.DIST_DIR }}
+          retention-days: 1
+
+# ===============================
+# 2️⃣ BUNDLE GUARD
+# ===============================
+
+  bundle-guard:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ${{ env.DIST_DIR }}
+
+      - name: Check bundle size
+        run: |
+          SIZE=$(du -sk ${{ env.DIST_DIR }} | cut -f1)
+          echo "Bundle size: $SIZE KB"
+          if [ "$SIZE" -gt "${{ inputs.bundle_limit_kb }}" ]; then
+            echo "Bundle exceeds limit."
+            exit 1
+          fi
+
+# ===============================
+# 3️⃣ NETLIFY PREVIEW
+# ===============================
+
+  netlify-preview:
+    needs: bundle-guard
+    if: ${{ inputs.target == 'both' || inputs.target == 'netlify' }}
+    runs-on: ubuntu-latest
+    outputs:
+      preview_url: ${{ steps.deploy.outputs.preview_url }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ${{ env.DIST_DIR }}
+
+      - run: npm install -g netlify-cli
+
+      - name: Deploy preview
+        id: deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          RESP=$(netlify deploy \
+            --dir=${{ env.DIST_DIR }} \
+            --site=$NETLIFY_SITE_ID \
+            --auth=$NETLIFY_AUTH_TOKEN \
+            --json \
+            --no-build \
+            --message="CI Preview Deploy")
+
+          echo "$RESP"
+
+          URL=$(echo "$RESP" | jq -r '.deploy_url // .url // empty')
+          echo "preview_url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Comment preview on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = "${{ steps.deploy.outputs.preview_url }}";
+            if (!url) return;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Preview Ready:\n${url}`
+            });
+
+# ===============================
+# 4️⃣ LIGHTHOUSE
+# ===============================
+
+  lighthouse:
+    needs: netlify-preview
+    if: ${{ needs.netlify-preview.outputs.preview_url != '' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: npm install -g lighthouse
+
+      - name: Run Lighthouse
+        id: lh
+        run: |
+          URL="${{ needs.netlify-preview.outputs.preview_url }}"
+
+          lighthouse "$URL" \
+            --chrome-flags="--headless" \
+            --output=json \
+            --output-path=report.json \
+            --quiet || exit 1
+
+          SCORE=$(jq '.categories.performance.score * 100 | floor' report.json)
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: report.json
+
+      - name: Summary
+        run: |
+          echo "## Lighthouse Score: ${{ steps.lh.outputs.score }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Enforce threshold
+        run: |
+          if [ "${{ steps.lh.outputs.score }}" -lt "${{ inputs.lighthouse_threshold }}" ]; then
+            echo "Lighthouse below threshold"
+            exit 1
+          fi
+
+# ===============================
+# 5️⃣ GITHUB PAGES
+# ===============================
+
+  github-pages:
+    needs: bundle-guard
+    if: ${{ inputs.target == 'both' || inputs.target == 'github-pages' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ${{ env.DIST_DIR }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.DIST_DIR }}
+
+      - uses: actions/deploy-pages@v4
+
+# ===============================
+# 6️⃣ NETLIFY PRODUCTION
+# ===============================
+
+  netlify-prod:
+    needs: lighthouse
+    if: ${{ inputs.mode == 'production' && (inputs.target == 'both' || inputs.target == 'netlify') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ${{ env.DIST_DIR }}
+
+      - run: npm install -g netlify-cli
+
+      - name: Deploy Production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy \
+            --prod \
+            --dir=${{ env.DIST_DIR }} \
+            --site=$NETLIFY_SITE_ID \
+            --auth=$NETLIFY_AUTH_TOKEN \
+            --no-build \
+            --message="CI Production Deploy"
