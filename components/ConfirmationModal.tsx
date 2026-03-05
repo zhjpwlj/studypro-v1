@@ -1,5 +1,5 @@
 
-import React, { useEffect, useContext, ReactNode } from 'react';
+import { useEffect, useContext, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
