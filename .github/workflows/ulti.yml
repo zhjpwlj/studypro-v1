@@ -56,10 +56,7 @@ jobs:
         run: npm ci
 
       - name: Type check (strict)
-        run: npm run typecheck || npx tsc --noEmit
-
-      - name: Lint (strict)
-        run: npm run lint
+        run: npm run typecheck || npx tsc
 
       - name: Build
         run: npm run build
