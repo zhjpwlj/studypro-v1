@@ -56,7 +56,7 @@ jobs:
         run: npm ci
 
       - name: Type check (strict)
-        run: npm run typecheck || npx tsc
+        run: npx tsc
 
       - name: Build
         run: npm run build
