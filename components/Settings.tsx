@@ -23,6 +23,7 @@ interface SettingsProps {
   onSetWallpaper: (wallpaperId: string) => void;
 }
 
+// Settings component for managing application preferences
 const Settings: React.FC<SettingsProps> = (props) => {
   const { onExportData, onImportData, onWipeData, getAllData, onRestoreData, user, isDarkMode, onToggleDarkMode, accentColor, onSetAccentColor, wallpaper, onSetWallpaper } = props;
   const [activeTab, setActiveTab] = useState('general');
@@ -322,6 +323,8 @@ const Settings: React.FC<SettingsProps> = (props) => {
                 <li>Optimized cloud sync frequency to prevent excessive API calls</li>
                 <li>Improved accessibility with ARIA labels</li>
                 <li>Enhanced UI responsiveness for mobile devices</li>
+                <li>Fixed TypeScript type error in ConfirmationModal to support ReactNode messages</li>
+                <li>Fixed linting error in ConfirmationModal by removing unused React import</li>
               </ul>
             </div>
           </div>

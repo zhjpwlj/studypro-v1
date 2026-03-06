@@ -1,5 +1,5 @@
 
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
@@ -8,11 +8,11 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  message: React.ReactNode;
+  message: ReactNode;
   confirmText?: string;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirm' }) => {
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirm' }: ConfirmationModalProps) => {
   const { t } = useContext(LanguageContext);
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
