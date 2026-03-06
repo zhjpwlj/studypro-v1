@@ -3,7 +3,7 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 // Custom hook to persist state in localStorage
 export function usePersistentState<T>(key: string, initialValue: T | (() => T)): [T, Dispatch<SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
-    const getInitialValue = (): T => {
+    const getInitialValue = () => {
       if (typeof initialValue === 'function') {
         return (initialValue as () => T)();
       }
@@ -25,7 +25,7 @@ export function usePersistentState<T>(key: string, initialValue: T | (() => T)):
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const getCircularReplacer = (): (key: string, value: unknown) => unknown => {
+        const getCircularReplacer = () => {
           const seen = new WeakSet();
           return (_key: string, value: unknown) => {
             if (typeof value === "object" && value !== null) {
