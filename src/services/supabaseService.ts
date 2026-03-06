@@ -3,22 +3,21 @@ import { createClient, Session, User } from '@supabase/supabase-js';
 const supabaseUrl = 'https://ssnqbbpbxtvowjrexfcj.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbnFiYnBieHR2b3dqcmV4ZmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDExODYsImV4cCI6MjA3ODc3NzE4Nn0.gPGa41FTLiLcuNXjsb2NHSoJtU5mlS1RP5l7UyCb5h8';
 
-// Cast to any to avoid type errors with different supabase-js versions
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const TABLE_NAME = 'user_data_backups';
 
 // --- Auth Functions ---
 
-export const signUp = (email: string, password: string): Promise<any> => {
+export const signUp = (email: string, password: string) => {
     return supabase.auth.signUp({ email, password });
 };
 
-export const signIn = (email: string, password: string): Promise<any> => {
+export const signIn = (email: string, password: string) => {
     return supabase.auth.signInWithPassword({ email, password });
 };
 
-export const signOut = (): Promise<any> => {
+export const signOut = () => {
     return supabase.auth.signOut();
 };
 
@@ -31,7 +30,7 @@ export const getSession = async (): Promise<{ session: Session | null }> => {
     return { session: data.session };
 };
 
-export const onAuthStateChange = (callback: (session: Session | null) => void): any => {
+export const onAuthStateChange = (callback: (session: Session | null) => void) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         callback(session);
     });
@@ -51,7 +50,7 @@ const getUser = async (): Promise<User | null> => {
 /**
  * Sanitizes an object by removing circular references.
  */
-const sanitizeData = (data: unknown): any => {
+const sanitizeData = (data: unknown) => {
     const seen = new WeakSet();
     return JSON.parse(JSON.stringify(data, (_key, value) => {
         if (typeof value === "object" && value !== null) {
@@ -70,7 +69,7 @@ const sanitizeData = (data: unknown): any => {
  * or update it if it does.
  * @param data - The JSON object of the user's application data.
  */
-export const backupData = async (user: User, data: Record<string, unknown>): Promise<{ error: any }> => {
+export const backupData = async (user: User, data: Record<string, unknown>) => {
   if (!user) return { error: { message: "User not authenticated" } };
 
   try {
@@ -89,7 +88,7 @@ export const backupData = async (user: User, data: Record<string, unknown>): Pro
 /**
  * Restores the user's data from Supabase.
  */
-export const restoreData = async (user: User): Promise<{ data: any; error: any }> => {
+export const restoreData = async (user: User) => {
   if (!user) return { data: null, error: { message: "User not authenticated" } };
 
   const { data, error } = await supabase

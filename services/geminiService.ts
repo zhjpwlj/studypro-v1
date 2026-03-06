@@ -111,7 +111,7 @@ const tools: FunctionDeclaration[] = [
   }
 ];
 
-const getApiKey = () => {
+const getApiKey = (): string | null => {
   return process.env.GEMINI_API_KEY || null;
 };
 
